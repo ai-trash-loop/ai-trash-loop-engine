@@ -1,0 +1,289 @@
+{
+  "$defs": {
+    "ContextFile": {
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/FileKind"
+        },
+        "token_estimate": {
+          "description": "ESTIMATE, not an exact tokenizer count",
+          "minimum": 0,
+          "title": "Token Estimate",
+          "type": "integer"
+        },
+        "load_mode": {
+          "$ref": "#/$defs/LoadMode",
+          "default": "unknown"
+        }
+      },
+      "required": [
+        "path",
+        "kind",
+        "token_estimate"
+      ],
+      "title": "ContextFile",
+      "type": "object"
+    },
+    "Evidence": {
+      "properties": {
+        "file": {
+          "description": "Path relative to repo root",
+          "title": "File",
+          "type": "string"
+        },
+        "line_start": {
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "line_end": {
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "quote": {
+          "description": "Exact text from the file",
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "line_start",
+        "line_end",
+        "quote"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "FileKind": {
+      "enum": [
+        "claude_md",
+        "agents_md",
+        "readme",
+        "rule",
+        "skill",
+        "adr",
+        "doc",
+        "other"
+      ],
+      "title": "FileKind",
+      "type": "string"
+    },
+    "Finding": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/FindingType"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "method": {
+          "$ref": "#/$defs/Method"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "recommendation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recommendation"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "severity",
+        "confidence",
+        "method",
+        "summary",
+        "evidence"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "FindingType": {
+      "enum": [
+        "duplicate",
+        "conflict",
+        "broken_reference",
+        "stale"
+      ],
+      "title": "FindingType",
+      "type": "string"
+    },
+    "LoadMode": {
+      "enum": [
+        "always",
+        "on_demand",
+        "unknown"
+      ],
+      "title": "LoadMode",
+      "type": "string"
+    },
+    "Method": {
+      "enum": [
+        "deterministic",
+        "llm"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "Metrics": {
+      "properties": {
+        "files_scanned": {
+          "default": 0,
+          "title": "Files Scanned",
+          "type": "integer"
+        },
+        "est_tokens_total": {
+          "default": 0,
+          "description": "Estimated tokens across context files",
+          "title": "Est Tokens Total",
+          "type": "integer"
+        },
+        "est_tokens_duplicated": {
+          "default": 0,
+          "description": "Estimated tokens in duplicated passages",
+          "title": "Est Tokens Duplicated",
+          "type": "integer"
+        },
+        "duration_ms": {
+          "default": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "llm_input_tokens": {
+          "default": 0,
+          "title": "Llm Input Tokens",
+          "type": "integer"
+        },
+        "llm_output_tokens": {
+          "default": 0,
+          "title": "Llm Output Tokens",
+          "type": "integer"
+        }
+      },
+      "title": "Metrics",
+      "type": "object"
+    },
+    "RepoInfo": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "commit_sha": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit Sha"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "RepoInfo",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "Severity",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "default": "0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "repo": {
+      "$ref": "#/$defs/RepoInfo"
+    },
+    "analyzed_at": {
+      "format": "date-time",
+      "title": "Analyzed At",
+      "type": "string"
+    },
+    "context_files": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextFile"
+      },
+      "title": "Context Files",
+      "type": "array"
+    },
+    "findings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "metrics": {
+      "$ref": "#/$defs/Metrics",
+      "default": {
+        "files_scanned": 0,
+        "est_tokens_total": 0,
+        "est_tokens_duplicated": 0,
+        "duration_ms": 0,
+        "llm_input_tokens": 0,
+        "llm_output_tokens": 0
+      }
+    }
+  },
+  "required": [
+    "engine_version",
+    "repo",
+    "analyzed_at"
+  ],
+  "title": "AnalysisReport",
+  "type": "object"
+}

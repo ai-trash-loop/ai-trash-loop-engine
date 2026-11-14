@@ -1,0 +1,23 @@
+[project]
+name = "trashloop"
+version = "0.0.1"
+description = "AI Trash-Loop analysis engine"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2", "markdown-it-py>=3"]
+
+[project.scripts]
+trashloop = "trashloop.cli:main"
+
+[project.optional-dependencies]
+llm = ["anthropic>=1"]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
